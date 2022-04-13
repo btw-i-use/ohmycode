@@ -346,7 +346,7 @@ stages:
                 variables:
                   VSCODE_ARCH: universal
                 steps:
-                  - template: darwin/product-build-darwin.yml
+                  - template: darwin/product-build-darwin-universal.yml
               - ${{ if ne(variables['VSCODE_PUBLISH'], 'false') }}:
                   - job: macOSUniversalSign
                     dependsOn:
