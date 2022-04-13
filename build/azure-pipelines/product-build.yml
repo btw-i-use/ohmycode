@@ -312,6 +312,13 @@ stages:
                   VSCODE_ARCH: x64
                 steps:
                   - template: darwin/product-build-darwin.yml
+              - ${{ if eq(variables['VSCODE_STEP_ON_IT'], false) }}:
+                - job: macOSTest
+                  timeoutInMinutes: 90
+                  variables:
+                    VSCODE_ARCH: x64
+                  steps:
+                    - template: darwin/product-build-darwin-test.yml
               - ${{ if ne(variables['VSCODE_PUBLISH'], 'false') }}:
                   - job: macOSSign
                     dependsOn:
