@@ -232,7 +232,7 @@ steps:
       ps -ef
     displayName: Diagnostics before smoke test run
     continueOnError: true
-    condition: and(succeededOrFailed())
+    condition: succeededOrFailed()
 
   - script: |
       set -e
@@ -263,7 +263,7 @@ steps:
       ps -ef
     displayName: Diagnostics after smoke test run
     continueOnError: true
-    condition: and(succeededOrFailed())
+    condition: succeededOrFailed()
 
   - task: PublishPipelineArtifact@0
     inputs:
@@ -289,11 +289,11 @@ steps:
       targetPath: .build/logs
     displayName: "Publish Log Files"
     continueOnError: true
-    condition: and(succeededOrFailed())
+    condition: succeededOrFailed()
 
   - task: PublishTestResults@2
     displayName: Publish Tests Results
     inputs:
       testResultsFiles: "*-results.xml"
       searchFolder: "$(Build.ArtifactStagingDirectory)/test-results"
-    condition: and(succeededOrFailed())
+    condition: succeededOrFailed()
