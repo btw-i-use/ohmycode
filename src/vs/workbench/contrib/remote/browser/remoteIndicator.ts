@@ -124,6 +124,45 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 			run = () => that.showRemoteMenu();
 		});
 
+		registerAction2(class extends Action2 {
+			constructor() {
+				super({
+					id: "remote.logRemoteAuthority",
+					category,
+					title: { value: nls.localize('remote.authority', "Log Remote Authority"), original: 'Log Remote Authority' },
+					f1: true,
+					precondition: ContextKeyExpr.or(RemoteNameContext, VirtualWorkspaceContext)
+				});
+			}
+			run = () => console.log(that.remoteAuthority);
+		});
+
+		registerAction2(class extends Action2 {
+			constructor() {
+				super({
+					id: "remote.logVirtualWorkspaceLocation",
+					category,
+					title: { value: nls.localize('remote.virtualWorkspaceLocation', "Log Virtual Workspace Location"), original: 'Log Virtual Workspace Location' },
+					f1: true,
+					precondition: ContextKeyExpr.or(RemoteNameContext, VirtualWorkspaceContext)
+				});
+			}
+			run = () => console.log(that.virtualWorkspaceLocation);
+		});
+
+		registerAction2(class extends Action2 {
+			constructor() {
+				super({
+					id: 'remote.logExtensionGalleryService',
+					category,
+					title: { value: nls.localize('remote.extensionGalleryService', "Log Extension Gallery Service"), original: 'Log Extension Gallery Service' },
+					f1: true,
+					precondition: ContextKeyExpr.or(RemoteNameContext, VirtualWorkspaceContext)
+				});
+			}
+			run = () => console.log(that.extensionGalleryService.isEnabled());
+		});
+
 		// Close Remote Connection
 		if (RemoteStatusIndicator.SHOW_CLOSE_REMOTE_COMMAND_ID) {
 			registerAction2(class extends Action2 {
@@ -464,6 +503,28 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 					});
 				}
 			}
+
+			items.push({
+				type: 'separator'
+			});
+
+			items.push({
+				type: 'item',
+				id: 'remote.logRemoteAuthority',
+				label: nls.localize('remote.logRemoteAuthority', 'Log Remote Authority')
+			});
+
+			items.push({
+				type: 'item',
+				id: 'remote.logVirtualWorkspaceLocation',
+				label: nls.localize('remote.logVirtualWorkspaceLocation', 'Log Virtual Workspace Location')
+			});
+
+			items.push({
+				type: 'item',
+				id: 'remote.logExtensionGalleryService',
+				label: nls.localize('remote.logExtensionGalleryService', 'Log Extension Gallery Service')
+			});
 
 			if (!this.remoteAuthority && !this.virtualWorkspaceLocation && this.extensionGalleryService.isEnabled()) {
 				items.push({
