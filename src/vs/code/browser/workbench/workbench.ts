@@ -494,6 +494,8 @@ function doCreateUri(path: string, queryValues: Map<string, string>): URI {
 	}
 	const config: IWorkbenchConstructionOptions & { folderUri?: UriComponents; workspaceUri?: UriComponents } = JSON.parse(configElementAttribute);
 
+	console.log('vscode-workbench-web-configuration', JSON.stringify(config, null, '  '))
+
 	// Create workbench
 	create(document.body, {
 		...config,
