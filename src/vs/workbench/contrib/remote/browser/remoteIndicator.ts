@@ -45,6 +45,7 @@ type ActionGroup = [string, Array<MenuItemAction | SubmenuItemAction>];
 export class RemoteStatusIndicator extends Disposable implements IWorkbenchContribution {
 
 	private static readonly REMOTE_ACTIONS_COMMAND_ID = 'workbench.action.remote.showMenu';
+	private static readonly CONNECT_REMOTE_COMMAND_ID = 'workbench.action.remote.connect';
 	private static readonly CLOSE_REMOTE_COMMAND_ID = 'workbench.action.remote.close';
 	private static readonly SHOW_CLOSE_REMOTE_COMMAND_ID = !isWeb; // web does not have a "Close Remote" command
 	private static readonly INSTALL_REMOTE_EXTENSIONS_ID = 'workbench.action.remote.extensions';
@@ -163,6 +164,27 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 			run = () => console.log(that.extensionGalleryService.isEnabled());
 		});
 
+		registerAction2(class extends Action2 {
+			constructor() {
+				super({
+					id: RemoteStatusIndicator.CONNECT_REMOTE_COMMAND_ID,
+					category,
+					title: { value: nls.localize('remote.connect', 'Connect Remote Authority'), original: 'Open Remote Connection' },
+					f1: true,
+					precondition: ContextKeyExpr.or(RemoteNameContext, VirtualWorkspaceContext)
+				});
+			}
+			run = () => {
+				try {
+					let rak = window.location.host+'remoteAuthority';
+					window.localStorage.setItem(rak, window.location.host);
+					console.log('set', rak, window.localStorage.getItem(rak));
+					that.hostService.openWindow({ forceReuseWindow: true, remoteAuthority: window.location.host });
+					window.location.reload();
+				} catch(error) { /* ignore */ }
+			};
+		});
+
 		// Close Remote Connection
 		if (RemoteStatusIndicator.SHOW_CLOSE_REMOTE_COMMAND_ID) {
 			registerAction2(class extends Action2 {
@@ -175,7 +197,15 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 						precondition: ContextKeyExpr.or(RemoteNameContext, VirtualWorkspaceContext)
 					});
 				}
-				run = () => that.hostService.openWindow({ forceReuseWindow: true, remoteAuthority: null });
+				run = () => {
+					try {
+						let rak = window.location.host+'remoteAuthority';
+						that.hostService.openWindow({ forceReuseWindow: true, remoteAuthority: null });
+						window.localStorage.removeItem(rak);
+						console.log('clear', rak, window.localStorage.getItem(rak));
+						window.location.reload();
+					} catch(error) { /* ignore */ }
+				}
 			});
 			if (this.remoteAuthority) {
 				MenuRegistry.appendMenuItem(MenuId.MenubarFileMenu, {
@@ -325,7 +355,10 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 		// Remote Indicator: show if provided via options, e.g. by the web embedder API
 		const remoteIndicator = this.windowIndicator;
 		if (remoteIndicator) {
+			if (this.remoteAuthority)
 			this.renderRemoteStatusIndicator(truncate(remoteIndicator.label, RemoteStatusIndicator.REMOTE_STATUS_LABEL_MAX_LENGTH), remoteIndicator.tooltip, remoteIndicator.command);
+			else
+			this.renderRemoteStatusIndicator(`$(remote)`, remoteIndicator.tooltip, remoteIndicator.command);
 			return;
 		}
 
@@ -503,6 +536,12 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 					});
 				}
 			}
+
+			items.push({
+				type: 'item',
+				id: RemoteStatusIndicator.CONNECT_REMOTE_COMMAND_ID,
+				label: nls.localize('connectRemoteConnection.title', 'Connect Remote Connection')
+			});
 
 			items.push({
 				type: 'separator'

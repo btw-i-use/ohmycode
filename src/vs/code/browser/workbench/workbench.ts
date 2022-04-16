@@ -492,7 +492,22 @@ function doCreateUri(path: string, queryValues: Map<string, string>): URI {
 	if (!configElement || !configElementAttribute) {
 		throw new Error('Missing web configuration element');
 	}
-	const config: IWorkbenchConstructionOptions & { folderUri?: UriComponents; workspaceUri?: UriComponents } = JSON.parse(configElementAttribute);
+
+	let conf = JSON.parse(configElementAttribute);
+
+	let rak = window.location.host+'remoteAuthority';
+
+	delete conf.remoteAuthority;
+
+	const remoteAuthority = window.localStorage.getItem(rak);
+
+	if (remoteAuthority) conf = { ...conf, remoteAuthority }
+
+	console.log('localStorageRemoteAuthority:', rak, remoteAuthority);
+
+	const config: IWorkbenchConstructionOptions & { folderUri?: UriComponents; workspaceUri?: UriComponents } = conf;
+
+	console.log('vscode-workbench-web-configuration', JSON.stringify(config, null, '  '));
 
 	// Create workbench
 	create(document.body, {
