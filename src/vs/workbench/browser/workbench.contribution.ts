@@ -447,7 +447,7 @@ const registry = Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Con
 			'workbench.experimental.layoutControl.enabled': {
 				'type': 'boolean',
 				'tags': ['experimental'],
-				'default': false,
+				'default': true,
 				'markdownDescription': localize({ key: 'layoutControlEnabled', comment: ['{0} is a placeholder for a setting identifier.'] }, "Controls whether the layout controls in the custom title bar is enabled via {0}.", '`#window.titleBarStyle#`'),
 				'markdownDeprecationMessage': localize({ key: 'layoutControlEnabledDeprecation', comment: ['{0} is a placeholder for a setting identifier.'] }, "This setting has been deprecated in favor of {0}", '`#workbench.layoutControl.enabled#`')
 			},
@@ -531,7 +531,7 @@ const registry = Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Con
 					localize('window.menuBarVisibility.hidden', "Menu is always hidden."),
 					localize('window.menuBarVisibility.compact', "Menu is displayed as a compact button in the side bar. This value is ignored when `#window.titleBarStyle#` is `native`.")
 				],
-				'default': isWeb ? 'compact' : 'classic',
+				'default': isWeb ? 'visible' : 'classic',
 				'scope': ConfigurationScope.APPLICATION,
 				'markdownDescription': isMacintosh ?
 					localize('menuBarVisibility.mac', "Control the visibility of the menu bar. A setting of 'toggle' means that the menu bar is hidden and executing `Focus Application Menu` will show it. A setting of 'compact' will move the menu into the side bar.") :
