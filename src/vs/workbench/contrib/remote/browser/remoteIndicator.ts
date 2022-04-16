@@ -21,7 +21,8 @@ import { IBrowserWorkbenchEnvironmentService } from 'vs/workbench/services/envir
 import { PersistentConnectionEventType } from 'vs/platform/remote/common/remoteAgentConnection';
 import { IRemoteAuthorityResolverService } from 'vs/platform/remote/common/remoteAuthorityResolver';
 import { IHostService } from 'vs/workbench/services/host/browser/host';
-import { isWeb } from 'vs/base/common/platform';
+import { Event } from 'vs/base/common/event';
+import { IWindowIndicator } from 'vs/workbench/browser/web.api';
 import { once } from 'vs/base/common/functional';
 import { truncate } from 'vs/base/common/strings';
 import { IWorkspaceContextService } from 'vs/platform/workspace/common/workspace';
@@ -38,6 +39,8 @@ import { RemoteNameContext, VirtualWorkspaceContext } from 'vs/workbench/common/
 import { IPaneCompositePartService } from 'vs/workbench/services/panecomposite/browser/panecomposite';
 import { ViewContainerLocation } from 'vs/workbench/common/views';
 
+const isWeb = false;
+
 type ActionGroup = [string, Array<MenuItemAction | SubmenuItemAction>];
 export class RemoteStatusIndicator extends Disposable implements IWorkbenchContribution {
 
@@ -49,6 +52,13 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 	private static readonly REMOTE_STATUS_LABEL_MAX_LENGTH = 40;
 
 	private remoteStatusEntry: IStatusbarEntryAccessor | undefined;
+
+	private windowIndicator: IWindowIndicator = {
+		label: "$(remote) k0s: boring_wozniak",
+		tooltip: "Running in boring_wozniak",
+		command: RemoteStatusIndicator.REMOTE_ACTIONS_COMMAND_ID,
+		onDidChange: Event.None,
+	};
 
 	private readonly legacyIndicatorMenu = this._register(this.menuService.createMenu(MenuId.StatusBarWindowIndicatorMenu, this.contextKeyService)); // to be removed once migration completed
 	private readonly remoteIndicatorMenu = this._register(this.menuService.createMenu(MenuId.StatusBarRemoteIndicatorMenu, this.contextKeyService));
@@ -180,7 +190,7 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 		this._register(this.labelService.onDidChangeFormatters(() => this.updateRemoteStatusIndicator()));
 
 		// Update based on remote indicator changes if any
-		const remoteIndicator = this.environmentService.options?.windowIndicator;
+		const remoteIndicator = this.windowIndicator;
 		if (remoteIndicator && remoteIndicator.onDidChange) {
 			this._register(remoteIndicator.onDidChange(() => this.updateRemoteStatusIndicator()));
 		}
@@ -274,7 +284,7 @@ export class RemoteStatusIndicator extends Disposable implements IWorkbenchContr
 	private updateRemoteStatusIndicator(): void {
 
 		// Remote Indicator: show if provided via options, e.g. by the web embedder API
-		const remoteIndicator = this.environmentService.options?.windowIndicator;
+		const remoteIndicator = this.windowIndicator;
 		if (remoteIndicator) {
 			this.renderRemoteStatusIndicator(truncate(remoteIndicator.label, RemoteStatusIndicator.REMOTE_STATUS_LABEL_MAX_LENGTH), remoteIndicator.tooltip, remoteIndicator.command);
 			return;
