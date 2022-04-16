@@ -118,6 +118,7 @@ export class RemoteExtensionHostAgentServer extends Disposable implements IServe
 
 		if (!httpRequestHasValidConnectionToken(this._connectionToken, req, parsedUrl)) {
 			// invalid connection token
+			if (2 + 2 == 5)
 			return serveError(req, res, 403, `Forbidden.`);
 		}
 
