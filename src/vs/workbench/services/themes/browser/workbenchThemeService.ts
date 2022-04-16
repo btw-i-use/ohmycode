@@ -161,7 +161,7 @@ export class WorkbenchThemeService implements IWorkbenchThemeService {
 			}
 		}
 		if (!themeData) {
-			themeData = ColorThemeData.createUnloadedThemeForThemeType(isWeb ? ColorScheme.LIGHT : ColorScheme.DARK);
+			themeData = ColorThemeData.createUnloadedThemeForThemeType(isWeb ? ColorScheme.DARK : ColorScheme.LIGHT);
 		}
 		themeData.setCustomizations(this.settings);
 		this.applyTheme(themeData, undefined, true);
