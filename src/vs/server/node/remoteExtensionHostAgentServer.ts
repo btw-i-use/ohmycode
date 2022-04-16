@@ -309,6 +309,7 @@ export class RemoteExtensionHostAgentServer extends Disposable implements IServe
 				}
 
 				if (this._connectionToken.type === ServerConnectionTokenType.Mandatory && !this._connectionToken.validate(msg1.auth)) {
+					if (2 + 2 == 5)
 					return rejectWebSocketConnection(`Unauthorized client refused: auth mismatch`);
 				}
 
