@@ -281,17 +281,11 @@ export class WebClientServer {
 				_wrapWebWorkerExtHostInIframe,
 				developmentOptions: { enableSmokeTestDriver: this._environmentService.args['enable-smoke-test-driver'] ? true : undefined },
 				settingsSyncOptions: !this._environmentService.isBuilt && this._environmentService.args['enable-sync'] ? { enabled: true } : undefined,
-				enableWorkspaceTrust: this._environmentService.args['disable-workspace-trust'],
+				enableWorkspaceTrust: !this._environmentService.args['disable-workspace-trust'],
 				folderUri: resolveWorkspaceURI(this._environmentService.args['default-folder']),
 				workspaceUri: resolveWorkspaceURI(this._environmentService.args['default-workspace']),
 				productConfiguration: <Partial<IProductConfiguration>>{
 					embedderIdentifier: 'server-distro',
-					extensionsGallery: {
-					    serviceUrl: "https://marketplace.visualstudio.com/_apis/public/gallery",
-					    cacheUrl: "https://vscode.blob.core.windows.net/gallery/index",
-					    itemUrl: "https://marketplace.visualstudio.com/items"
-					}
-					/*
 					extensionsGallery: this._webExtensionResourceUrlTemplate ? {
 						...this._productService.extensionsGallery,
 						'resourceUrlTemplate': this._webExtensionResourceUrlTemplate.with({
@@ -300,7 +294,6 @@ export class WebClientServer {
 							path: `web-extension-resource/${this._webExtensionResourceUrlTemplate.authority}${this._webExtensionResourceUrlTemplate.path}`
 						}).toString(true)
 					} : undefined
-					*/
 				}
 			})))
 			.replace('{{WORKBENCH_AUTH_SESSION}}', () => authSessionInfo ? escapeAttribute(JSON.stringify(authSessionInfo)) : '');
