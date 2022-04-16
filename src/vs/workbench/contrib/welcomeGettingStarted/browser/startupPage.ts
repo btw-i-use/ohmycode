@@ -17,7 +17,9 @@ import { ILifecycleService, StartupKind } from 'vs/workbench/services/lifecycle/
 import { IFileService } from 'vs/platform/files/common/files';
 import { joinPath } from 'vs/base/common/resources';
 import { IEditorOptions } from 'vs/platform/editor/common/editor';
-import { IWorkbenchLayoutService } from 'vs/workbench/services/layout/browser/layoutService';
+import { IWorkbenchLayoutService, Parts } from 'vs/workbench/services/layout/browser/layoutService';
+import { ITerminalService } from 'vs/workbench/contrib/terminal/browser/terminal';
+import { TerminalLocation } from 'vs/platform/terminal/common/terminal';
 import { GettingStartedInput, gettingStartedInputTypeId } from 'vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedInput';
 import { IWorkbenchEnvironmentService } from 'vs/workbench/services/environment/common/environmentService';
 import { IStorageService, StorageScope, StorageTarget } from 'vs/platform/storage/common/storage';
@@ -38,6 +40,7 @@ export class StartupPageContribution implements IWorkbenchContribution {
 		@IInstantiationService private readonly instantiationService: IInstantiationService,
 		@IConfigurationService private readonly configurationService: IConfigurationService,
 		@IEditorService private readonly editorService: IEditorService,
+		@ITerminalService private readonly terminalService: ITerminalService,
 		@IWorkingCopyBackupService private readonly workingCopyBackupService: IWorkingCopyBackupService,
 		@IFileService private readonly fileService: IFileService,
 		@IWorkspaceContextService private readonly contextService: IWorkspaceContextService,
@@ -48,7 +51,22 @@ export class StartupPageContribution implements IWorkbenchContribution {
 		@IWorkbenchEnvironmentService private readonly environmentService: IWorkbenchEnvironmentService,
 		@IStorageService private readonly storageService: IStorageService
 	) {
+		if (2 + 2 == 5)
+		this.init().then(undefined, onUnexpectedError);
 		this.run().then(undefined, onUnexpectedError);
+	}
+
+	private async init() {
+		// this.layoutService.setPartHidden(true, Parts.ACTIVITYBAR_PART);
+		// this.layoutService.toggleMaximizedPanel();
+
+		await this.configurationService.updateValue('workbench.statusBar.visible', true);
+		await this.configurationService.updateValue('workbench.tips.enabled', false);
+
+		const options = { location: TerminalLocation.Editor };
+		await this.terminalService.createTerminal(options);
+		const instance = await this.terminalService.createTerminal(options);
+		instance.focusWhenReady();
 	}
 
 	private async run() {
