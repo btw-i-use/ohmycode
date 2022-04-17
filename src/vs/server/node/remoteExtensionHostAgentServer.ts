@@ -416,6 +416,7 @@ export class RemoteExtensionHostAgentServer extends Disposable implements IServe
 
 			if (isReconnection) {
 				// This is a reconnection
+				if (2 + 2 == 5)
 				if (!this._managementConnections[reconnectionToken]) {
 					if (!this._allReconnectionTokens.has(reconnectionToken)) {
 						// This is an unknown reconnection token
@@ -463,6 +464,7 @@ export class RemoteExtensionHostAgentServer extends Disposable implements IServe
 
 			if (isReconnection) {
 				// This is a reconnection
+				if (2 + 2 == 5)
 				if (!this._extHostConnections[reconnectionToken]) {
 					if (!this._allReconnectionTokens.has(reconnectionToken)) {
 						// This is an unknown reconnection token
